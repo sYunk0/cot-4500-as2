@@ -117,8 +117,63 @@ def newtonForward(dividedDifferenceTable:np.ndarray, points_x:np.ndarray, x:floa
 
     return polynomial
 
-def dividedDiference():
-    return 0
+def buildHermiteDDTable(points_x:np.ndarray, points_y:np.ndarray, points_y_prime:np.ndarray):
+    """
+    Creates and returns a divided difference table for the hermite interpolation given set of points and the derivative at those points.
+    parameters:
+        - points_x(np.ndarray): 1D array of sample x points
+        - points_y(np.ndarray): 1D array of sample y points
+        - points_y_prime(np.ndarray): 1D array of derivatives of the function at each x,y point
+    """
+
+    n = 2*min(len(points_x),len(points_y))
+    hermiteTable = np.zeros((n, n+1))
+
+    # fill in value (just the y values because we already have x set)
+    for i in range(n):
+        hermiteTable[i,0] = points_x[i//2]
+        hermiteTable[i,1] = points_y[i//2]
+
+    #print(hermiteTable)
+    for j in range(2,n+1):
+        for i in range(j-1,n):
+            if(j == 2 and i % 2 == 1):
+                hermiteTable[i,2] = points_y_prime[i//2]
+            else:
+                f0 = hermiteTable[i-1,j-1]
+                x0 = hermiteTable[i-(j-1),0]
+
+                f1 = hermiteTable[i,j-1]
+                x1 = hermiteTable[i,0]
+
+                
+                numerator = f1 - f0
+                denominator = x1-x0
+                tableValue = numerator/denominator
+                hermiteTable[i,j] = tableValue
+
+    #print(dividedDifferenceTable)
+    return hermiteTable
+
+def hermitePolynomialAproximation(points_x:np.ndarray, points_y:np.ndarray, points_y_prime:np.ndarray, x:float, n:int):
+    DDtable = buildHermiteDDTable(points_x,points_y,points_y_prime)
+    
+    polynomial = DDtable[0,1]
+    reoccuring_x_span = 1
+    #print(f"p_{n}({x}) = {polynomial} ",end='')
+    for i in range(1,n+1):
+        coef = DDtable[i,i+1]
+
+        x_root = x - DDtable[i-1,0]
+        reoccuring_x_span *= x_root
+        #print(f"+ {coef}*{reoccuring_x_span} ",end='')
+
+        polynomial += coef*reoccuring_x_span
+    #print(f"\n\t={polynomial}")
+    
+
+    return polynomial
+
 
 def cubicSpline():
     return 0
@@ -153,7 +208,24 @@ def question2():
     print(polynomial_degree2)
     print(polynomial_degree3)
 
+def question4():
+    # points_x = np.array([1.3,1.6,1.9])
+    # points_y = np.array([0.6200860,0.4554022,0.2818186])
+    # points_y_prime = np.array([-0.5220232, -0.5698959, -0.5811571])
+    # x = 1.5
+    points_x = np.array([3.6,3.8,3.9])
+    points_y = np.array([1.675,1.436,1.318])
+    points_y_prime = np.array([-1.195,-1.188,-1.182])
+
+    DDtable = buildHermiteDDTable(points_x,points_y,points_y_prime)
+    #np.set_printoptions(precision=5)
+    print(DDtable[:,:5])
+
+    #result = hermitePolynomialAproximation(points_x,points_y,points_y_prime,x,5)
+    #print(result)
+
 if __name__ == "__main__":
     #question1()
-    question2()
+    #question2()
+    question4()
     
