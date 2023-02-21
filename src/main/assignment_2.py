@@ -175,8 +175,39 @@ def hermitePolynomialAproximation(points_x:np.ndarray, points_y:np.ndarray, poin
     return polynomial
 
 
-def cubicSpline():
-    return 0
+def cubicSpline(points_x:np.ndarray, points_y:np.ndarray):
+
+    n = min(len(points_x),len(points_y))
+    h = np.zeros(n-1)
+    for j in range(n-1):
+        h[j] = points_x[j+1]-points_x[j]
+
+    A = np.identity(n)
+    b = np.zeros(n)
+    for i in range(1,n-1):
+        #format A
+        j1=i-1
+        j2=i
+        j3=i+1
+        A[i,j1] = h[j1]
+        A[i,j3] = h[j1 + 1]
+
+        A[i,j2] = 2 * (h[j1] + h[j1+1])
+
+        #format b
+        v1 = (3/h[i])*(points_y[i+1]-points_y[i])
+        v2 = (3/h[i-1])*(points_y[i]-points_y[i-1])
+        b[i] = v1-v2
+
+    x = np.linalg.solve(A,b)
+
+    # print('A=',A)
+    # print('\nb=',b)
+    # print('\nx=',x)
+
+
+
+    return A,b,x
 
 
 def question1():
@@ -224,8 +255,21 @@ def question4():
     #result = hermitePolynomialAproximation(points_x,points_y,points_y_prime,x,5)
     #print(result)
 
+def question5():
+    points_x = np.array([0,1,2,3])
+    points_y = np.array([1,2,4,8])
+
+    A,b,x = cubicSpline(points_x,points_y)
+    print(A)
+    print(b)
+    print(x)
+
 if __name__ == "__main__":
-    #question1()
-    #question2()
+    question1()
+    print()
+    question2()
+    print()
     question4()
+    print()
+    question5()
     
