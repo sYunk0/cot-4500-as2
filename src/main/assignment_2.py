@@ -19,6 +19,7 @@ def LagrangianCoefficient(n:int,k:int,x:float,points:np.ndarray):
         else:
             currentProduct = (x-points[i]) / (points[k] - points[i])
             cumProduct *= currentProduct
+
     return cumProduct
 
 def LagrangianPolynomial(n:int,x:float,points_x:np.ndarray,points_y:np.ndarray):
@@ -40,7 +41,34 @@ def LagrangianPolynomial(n:int,x:float,points_x:np.ndarray,points_y:np.ndarray):
     return cumSum
 
 
-def nevillesMethod():
+def nevillesMethod(points_x:np.ndarray, points_y:np.ndarray, x:float):
+
+    n = min(len(points_x),len(points_y))
+    nevillesTable = np.zeros((n, n))
+
+    # fill in value (just the y values because we already have x set)
+    for i in range(n):
+        nevillesTable[i,0] = points_y[i]
+
+    for j in range(1,n):
+        for i in range(j,n):
+            p0 = nevillesTable[i-1,j-1]
+            x0 = points_x[i-j]
+
+            p1 = nevillesTable[i,j-1]
+            x1 = points_x[i]
+
+            coef = 1 / (x1 - x0)
+            mult1 = (x-x0)*p1
+            mult2 = (x-x1)*p0
+            tableValue = coef*(mult1 - mult2)
+            nevillesTable[i,j] = tableValue
+    #print(nevillesTable)
+    return nevillesTable[-1,-1]
+
+
+    
+    
     return 0
 
 def newtonForward():
@@ -54,9 +82,15 @@ def cubicSpline():
 
 
 def question1():
-    result = nevillesMethod()
+
+    points_x = np.array([3.6,3.8,3.9])
+    points_y = np.array([1.675,1.436,1.318])
+    x = 3.7
+
+    result = nevillesMethod(points_x,points_y,x)
     print(result)
 
 
 if __name__ == "__main__":
     question1()
+    
