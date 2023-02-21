@@ -71,8 +71,51 @@ def nevillesMethod(points_x:np.ndarray, points_y:np.ndarray, x:float):
     
     return 0
 
-def newtonForward():
-    return 0
+def buildDDTable(points_x:np.ndarray, points_y:np.ndarray):
+    """
+    Creates and returns a divided difference table for a given set of points.
+    parameters:
+        - points_x(np.ndarray): 1D array of sample x points
+        - points_y(np.ndarray): 1D array of sample y points
+    """
+
+    n = min(len(points_x),len(points_y))
+    dividedDifferenceTable = np.zeros((n, n))
+
+    # fill in value (just the y values because we already have x set)
+    for i in range(n):
+        dividedDifferenceTable[i,0] = points_y[i]
+
+    for j in range(1,n):
+        for i in range(j,n):
+            f0 = dividedDifferenceTable[i-1,j-1]
+            x0 = points_x[i-j]
+
+            f1 = dividedDifferenceTable[i,j-1]
+            x1 = points_x[i]
+
+            
+            numerator = f1 - f0
+            denominator = x1-x0
+            tableValue = numerator/denominator
+            dividedDifferenceTable[i,j] = tableValue
+
+    #print(dividedDifferenceTable)
+    return dividedDifferenceTable
+
+def newtonForward(dividedDifferenceTable:np.ndarray, points_x:np.ndarray, x:float,n:int):
+
+    polynomial = dividedDifferenceTable[0,0]
+    reoccuring_x_span = 1
+    for i in range(1,n+1):
+        coef = dividedDifferenceTable[i,i]
+
+        x_root = x - points_x[i-1]
+        reoccuring_x_span *= x_root
+
+        polynomial += coef*reoccuring_x_span
+
+    return polynomial
 
 def dividedDiference():
     return 0
@@ -90,7 +133,27 @@ def question1():
     result = nevillesMethod(points_x,points_y,x)
     print(result)
 
+def question2():
+
+    points_x = np.array([7.2,7.4,7.5,7.6])
+    points_y = np.array([23.5492,25.3913,26.8224,27.4589])
+
+    #points_x = np.array([1,1.3,1.6,1.9,2.2])
+    #points_y = np.array([0.7651977,0.6200860,0.4554022,0.2818186,0.1103623])
+    x = 7.3
+
+    ddTable = buildDDTable(points_x,points_y)
+    polynomial_degree1 = newtonForward(ddTable,points_x,x,1)
+    polynomial_degree2 = newtonForward(ddTable,points_x,x,2)
+    polynomial_degree3 = newtonForward(ddTable,points_x,x,3)
+    
+    print(ddTable)
+    print()
+    print(polynomial_degree1)
+    print(polynomial_degree2)
+    print(polynomial_degree3)
 
 if __name__ == "__main__":
-    question1()
+    #question1()
+    question2()
     
