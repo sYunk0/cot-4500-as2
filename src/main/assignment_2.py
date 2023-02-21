@@ -233,10 +233,10 @@ def question2():
     polynomial_degree2 = newtonForward(ddTable,points_x,x,2)
     polynomial_degree3 = newtonForward(ddTable,points_x,x,3)
     
-    print(ddTable)
+    print(np.array([ddTable[1,1],ddTable[2,2],ddTable[3,3]]))
     print()
-    print(polynomial_degree1)
-    print(polynomial_degree2)
+    #print(polynomial_degree1)
+    #print(polynomial_degree2)
     print(polynomial_degree3)
 
 def question4():
@@ -249,19 +249,21 @@ def question4():
     points_y_prime = np.array([-1.195,-1.188,-1.182])
 
     DDtable = buildHermiteDDTable(points_x,points_y,points_y_prime)
-    #np.set_printoptions(precision=5)
-    print(DDtable[:,:5])
+    np.set_printoptions(suppress=True)
+    print(DDtable[:,:6])
 
     #result = hermitePolynomialAproximation(points_x,points_y,points_y_prime,x,5)
     #print(result)
 
 def question5():
-    points_x = np.array([0,1,2,3])
-    points_y = np.array([1,2,4,8])
+    points_x = np.array([2,5,8,10])
+    points_y = np.array([3,5,7,9])
 
     A,b,x = cubicSpline(points_x,points_y)
     print(A)
+    print()
     print(b)
+    print()
     print(x)
 
 if __name__ == "__main__":

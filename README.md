@@ -9,7 +9,7 @@ __init__.py does nothing
 ## Running
 To run assignment_1.py use:
 ```bash
-    python src\main\assignment_1.py
+    python src\main\assignment_2.py
 ```
 
 ## Requirements
